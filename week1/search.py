@@ -116,7 +116,7 @@ def create_query(user_query, filters, sort="_score", sortDir="desc"):
                     {
                         "query_string": {
                             "query": user_query,
-                            "fields": [ "name", "shortDescription", "longDescription" ],
+                            "fields": [ "name^100", "shortDescription^50", "longDescription^10" ],
                             "phrase_slop": 3
                         }
                     }
@@ -138,10 +138,32 @@ def create_query(user_query, filters, sort="_score", sortDir="desc"):
                     "field": "regularPrice",
                     "ranges": [
                         {
+                            "key": "$",
                             "to": 100,
                         },
                         {
-                            "from": 100
+                            "key": "$$",
+                            "from": 100,
+                            "to": 200
+                        },
+                        {
+                            "key": "$$$",
+                            "from": 200,
+                            "to": 300
+                        },
+                        {
+                            "key": "$$$$",
+                            "from": 300,
+                            "to": 400
+                        },
+                        {
+                            "key": "$$$$$",
+                            "from": 400,
+                            "to": 500
+                        },
+                        {
+                            "key": "$$$$$$",
+                            "from": 500
                         }
                     ]
                 }
