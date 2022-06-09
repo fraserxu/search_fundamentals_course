@@ -67,7 +67,7 @@ def get_opensearch():
         use_ssl=True,
         verify_certs=False,
         ssl_assert_hostname=False,
-        sll_show_warn=False
+        ssl_show_warn=False
     )
     return client
 
