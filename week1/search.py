@@ -97,7 +97,7 @@ def query():
     response = opensearch.search(body=query_obj, index="bbuy_products")
     # Postprocess results here if you so desire
 
-    print(response)
+    # print(response)
     if error is None:
         return render_template("search_results.jinja2", query=user_query, search_response=response,
                                display_filters=display_filters, applied_filters=applied_filters,
@@ -111,15 +111,52 @@ def create_query(user_query, filters, sort="_score", sortDir="desc"):
     query_obj = {
         'size': 10,
         "query": {
-            "query_string": {
-                "query": user_query,
-                "fields": [ "name", "shortDescription", "longDescription" ],
-                "phrase_slop": 3
+            "bool": {
+                "must": [
+                    {
+                        "query_string": {
+                            "query": user_query,
+                            "fields": [ "name", "shortDescription", "longDescription" ],
+                            "phrase_slop": 3
+                        }
+                    }
+                ],
+                "filter": filters
+            }
+        },
+        "highlight": {
+            "fields": {
+                "name": {},
+                "shortDescription": {},
+                "longDescription": {}
             }
         },
         "aggs": {
             #### Step 4.b.i: create the appropriate query and aggregations here
-
-        }
+            "regularPrice": {
+                "range": {
+                    "field": "regularPrice",
+                    "ranges": [
+                        {
+                            "to": 100,
+                        },
+                        {
+                            "from": 100
+                        }
+                    ]
+                }
+            },
+            "department": {
+                "terms": {
+                    "field": "department.keyword"
+                }
+            },
+            "missing_images": {
+                "missing": {
+                    "field": "image.keyword"
+                }
+            }
+        },
+        "sort": sort
     }
     return query_obj
