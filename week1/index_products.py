@@ -79,6 +79,7 @@ def main(source_dir: str, index_name: str):
     client = get_opensearch()
     # To test on a smaller set of documents, change this glob to be more restrictive than *.xml
     files = glob.glob(source_dir + "/*.xml")
+
     docs_indexed = 0
     tic = time.perf_counter()
     for file in files:
@@ -101,12 +102,15 @@ def main(source_dir: str, index_name: str):
             the_doc = {'_index': index_name, '_source': doc}
             docs.append(the_doc)
 
-            if idx % 2000 == 0:
+            if len(docs) % 2000 == 0:
                 bulk(client, docs, request_timeout=60)
-                logger.info(f'{idx} documents indexed')
+                logger.info(f'{len(docs)} documents indexed')
+                docs_indexed = docs_indexed + 2000
                 docs = []
     if len(docs) > 0:
+        logger.info(f'{len(docs)} extra documents indexed')
         bulk(client, docs, request_timeout=60)
+        docs_indexed = docs_indexed + len(docs)
     toc = time.perf_counter()
     logger.info(f'Done. Total docs: {docs_indexed}.  Total time: {((toc - tic) / 60):0.3f} mins.')
 
