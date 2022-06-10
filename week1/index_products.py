@@ -104,11 +104,10 @@ def main(source_dir: str, index_name: str):
 
             if len(docs) % 2000 == 0:
                 bulk(client, docs, request_timeout=60)
-                logger.info(f'{len(docs)} documents indexed')
                 docs_indexed = docs_indexed + 2000
+                logger.info(f'{docs_indexed} documents indexed')
                 docs = []
     if len(docs) > 0:
-        logger.info(f'{len(docs)} extra documents indexed')
         bulk(client, docs, request_timeout=60)
         docs_indexed = docs_indexed + len(docs)
     toc = time.perf_counter()
