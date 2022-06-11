@@ -141,7 +141,7 @@ def create_query(user_query, filters, sort="_score", sortDir="desc"):
                         "must": [
                             {
                                 "query_string": {
-                                    "query": user_query,
+                                    "query": f'"{user_query}"',
                                     "fields": [
                                         "name^100",
                                         "shortDescription^50",
