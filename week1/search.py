@@ -107,7 +107,13 @@ def query():
 
 
 def create_query(user_query, filters, sort="_score", sortDir="desc"):
-    print("Query: {} Filters: {} Sort: {}".format(user_query, filters, sort))
+    print("Query: {} Filters: {} Sort: {} SortDir: {}".format(user_query, filters, sort, sortDir))
+
+    sort_obj = {}
+    sort_obj[sort] = {
+        "order": sortDir
+    }
+
     query_obj = {
         'size': 10,
         "query": {
@@ -179,6 +185,8 @@ def create_query(user_query, filters, sort="_score", sortDir="desc"):
                 }
             }
         },
-        "sort": sort
+        "sort": [
+            sort_obj
+        ]
     }
     return query_obj
